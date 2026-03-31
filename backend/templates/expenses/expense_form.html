@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Pocket Pulse{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row g-4 justify-content-center">
+    <!-- Main Form Section -->
+    <div class="col-lg-8">
+        <div class="glass-card">
+            <div class="d-flex align-items-center mb-4 pb-2" style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                <div class="stat-icon primary me-3" style="width: 42px; height: 42px; font-size: 1.1rem; background: rgba(96, 165, 250, 0.1);">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold m-0 text-white">Expense Details</h5>
+                    <p class="text-muted small mb-0">Record a new transaction to your dashboard.</p>
+                </div>
+            </div>
+
+            <form method="post" id="expense-form">
+                {% csrf_token %}
+                <div class="row g-4">
+                    <!-- Category & Title -->
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small text-uppercase tracking-wider fw-bold">Select Category</label>
+                        {{ form.category }}
+                        <small class="text-muted" style="font-size: 0.75rem;">Title will auto-fill based on selection.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small text-uppercase tracking-wider fw-bold">Entry Title</label>
+                        {{ form.title }}
+                    </div>
+
+                    <!-- Amount & Date -->
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small text-uppercase tracking-wider fw-bold">Amount (₹)</label>
+                        <div class="input-group">
+                            {{ form.amount }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small text-uppercase tracking-wider fw-bold">Date of Expense</label>
+                        {{ form.date }}
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label class="form-label text-muted small text-uppercase tracking-wider fw-bold">Notes / Description (Optional)</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-3 d-flex justify-content-between align-items-center" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                    <p class="text-muted small mb-0"><i class="fa-solid fa-circle-info me-1"></i> Entries are private.</p>
+                    <div>
+                        <a href="{% url 'expense_list' %}" class="btn btn-outline-light me-2" style="border: none; color: #94a3b8; font-size: 0.9rem;">Cancel</a>
+                        <button type="submit" class="btn btn-primary-custom px-4 py-2">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>Save Entry
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Tips / Sidebar -->
+    <div class="col-lg-4">
+        <div class="glass-card h-100">
+            <h6 class="fw-bold mb-4 text-white"><i class="fa-solid fa-lightbulb me-2 text-warning"></i> Entry Tips</h6>
+            
+            <div class="mb-4">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="text-primary me-3 mt-1"><i class="fa-solid fa-check-double small"></i></div>
+                    <p class="text-muted small mb-0">Use clear titles to help the AI categorize your spending habits accurately.</p>
+                </div>
+                <div class="d-flex align-items-start mb-3">
+                    <div class="text-primary me-3 mt-1"><i class="fa-solid fa-check-double small"></i></div>
+                    <p class="text-muted small mb-0">Categorizing your expenses helps in detailed budget analysis and charts.</p>
+                </div>
+                <div class="d-flex align-items-start">
+                    <div class="text-primary me-3 mt-1"><i class="fa-solid fa-check-double small"></i></div>
+                    <p class="text-muted small mb-0">Add descriptions for one-off costs to remember the purpose later.</p>
+                </div>
+            </div>
+
+            <div class="bg-dark p-3 rounded-3" style="background-color: rgba(255,255,255,0.02) !important; border: 1px solid rgba(255,255,255,0.05);">
+                <p class="text-muted small mb-2"><i class="fa-solid fa-clock-rotate-left me-1"></i> Quick Tip:</p>
+                <p class="text-white small fw-medium m-0">You can also import multiple expenses via a CSV file from the dashboard menu.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modern Form Styling */
+#expense-form input,
+#expense-form select,
+#expense-form textarea {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid #1e293b !important;
+    color: #f8fafc !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    width: 100% !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+}
+
+#expense-form input:focus,
+#expense-form select:focus,
+#expense-form textarea:focus {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.2) !important;
+    outline: none !important;
+}
+
+#expense-form select option {
+    background: #0f172a;
+    color: #f1f5f9;
+}
+
+ul.errorlist {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    list-style: none;
+    padding-left: 0;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelect = document.getElementById('id_category');
+        const titleInput = document.getElementById('id_title');
+
+        if (categorySelect && titleInput) {
+            categorySelect.addEventListener('change', function() {
+                const selectedText = categorySelect.options[categorySelect.selectedIndex].text;
+                if (categorySelect.value) {
+                    titleInput.value = selectedText;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Expenses - Pocket Pulse{% endblock %}
+{% block page_title %}Transaction History{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="text-white fw-bold m-0"><i class="fa-solid fa-list-check me-2 text-primary"></i>My Expenses</h2>
+        <p class="text-muted small mb-0">Browse and manage all your historical spending data.</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+            <a href="{% url 'import_csv' %}" class="btn btn-outline-light btn-sm px-3">
+                <i class="fa-solid fa-file-import me-1"></i>Import
+            </a>
+            <a href="{% url 'expense_export' %}?search={{ search_query }}&category={{ category_id }}&start_date={{ start_date }}&end_date={{ end_date }}"
+                class="btn btn-outline-light btn-sm px-3">
+                <i class="fa-solid fa-file-csv me-1"></i>Export
+            </a>
+            <a href="{% url 'add_expense' %}" class="btn btn-primary-custom btn-sm px-4">
+                <i class="fa-solid fa-plus me-1"></i>New Expense
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filters Toolbar -->
+<div class="glass-card mb-4 p-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-lg-3 col-md-4">
+            <label class="form-label text-muted small fw-bold text-uppercase">Search</label>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text bg-transparent border-end-0" style="border-color: rgba(255,255,255,0.1);"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                <input type="text" name="search" class="form-control form-control-sm border-start-0" value="{{ search_query }}"
+                    placeholder="Search by title..." style="border-color: rgba(255,255,255,0.1);">
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label text-muted small fw-bold text-uppercase">Category</label>
+            <select name="category" class="form-select form-select-sm" style="border-color: rgba(255,255,255,0.1);">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if cat.id in selected_category %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label text-muted small fw-bold text-uppercase">Starts</label>
+            <input type="date" name="start_date" class="form-control form-control-sm" value="{{ start_date }}" style="border-color: rgba(255,255,255,0.1);">
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <label class="form-label text-muted small fw-bold text-uppercase">Ends</label>
+            <input type="date" name="end_date" class="form-control form-control-sm" value="{{ end_date }}" style="border-color: rgba(255,255,255,0.1);">
+        </div>
+        <div class="col-lg-3 col-md-8 d-flex gap-2 justify-content-lg-end">
+            <button type="submit" class="btn btn-primary-custom btn-sm flex-grow-1 px-3">
+                <i class="fa-solid fa-filter me-1"></i> Apply
+            </button>
+            <a href="{% url 'expense_list' %}" class="btn btn-outline-light btn-sm flex-grow-1 px-3">
+                <i class="fa-solid fa-rotate-left me-1"></i> Reset
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Transactions Table -->
+<div class="glass-card mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.05);">
+                    <th class="ps-4">Date & Status</th>
+                    <th>Reference Title</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr class="transaction-row">
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center">
+                            <div class="stat-icon me-3" style="width: 32px; height: 32px; font-size: 0.8rem; background: rgba(52, 211, 153, 0.1); color: #34d399; border-radius: 8px;">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <span class="date-column">{{ expense.date|date:"d M, Y" }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-white fw-semibold">{{ expense.title }}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-custom px-3 py-2" style="background: rgba(96, 165, 250, 0.05); border: 1px solid rgba(96, 165, 250, 0.1); color: #93c5fd; font-weight: 500;">
+                            {{ expense.category.name|default:"Uncategorized" }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="fw-bold text-white">₹{{ expense.amount }}</span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="btn-group">
+                            <a href="{% url 'expense_edit' expense.pk %}" class="btn btn-sm btn-icon-link" title="Edit">
+                                <i class="fa-solid fa-pen-to-square text-muted"></i>
+                            </a>
+                            <a href="{% url 'expense_delete' expense.pk %}" class="btn btn-sm btn-icon-link" title="Delete">
+                                <i class="fa-solid fa-trash-can text-danger opacity-75"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-box-open d-block mb-3 fs-3 opacity-50"></i>
+                        No expenses found for the selected criteria.<br>
+                        <a href="{% url 'add_expense' %}" class="text-primary text-decoration-none mt-2 d-inline-block">Add your first expense</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if expenses.has_other_pages %}
+    <nav class="mt-4 pt-4 border-top" style="border-top: 1px solid rgba(255,255,255,0.05) !important;">
+        <ul class="pagination justify-content-center m-0 pb-3">
+            {% if expenses.has_previous %}
+            <li class="page-item">
+                <a class="page-link border-0" href="?page={{ expenses.previous_page_number }}&search={{ search_query }}&category={{ category_id }}&start_date={{ start_date }}&end_date={{ end_date }}">
+                    <i class="fa-solid fa-chevron-left small"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active mx-2"><span class="page-link rounded-3 px-3">Page {{ expenses.number }} of {{ expenses.paginator.num_pages }}</span></li>
+
+            {% if expenses.has_next %}
+            <li class="page-item">
+                <a class="page-link border-0" href="?page={{ expenses.next_page_number }}&search={{ search_query }}&category={{ category_id }}&start_date={{ start_date }}&end_date={{ end_date }}">
+                    <i class="fa-solid fa-chevron-right small"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<style>
+.transaction-row {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02) !important;
+}
+.transaction-row:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+.btn-icon-link {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.btn-icon-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+.input-group-text {
+    color: #64748b;
+}
+</style>
+{% endblock %}

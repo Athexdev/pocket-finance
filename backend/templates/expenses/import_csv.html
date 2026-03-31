@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Import Expenses - PocketPulse{% endblock %}
+{% block page_title %}Import CSV{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2 class="text-primary fw-bold m-0"><i class="fa-solid fa-file-import me-2"></i>Import CSV</h2>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="glass-card">
+            <h5 class="fw-bold mb-4 text-primary">Upload CSV File</h5>
+            <p class="text-muted small mb-4">
+                Upload a CSV file with following columns: <strong>Date, Title, Category, Amount, Description</strong>.<br>
+                Date format should be: <strong>DD-MM-YYYY</strong> (e.g., 17-03-2026).
+            </p>
+            
+            <form method="post" enctype="multipart/form-data" id="import-form">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="csv_file" class="form-label text-muted small text-uppercase tracking-wider fw-bold">Select CSV File</label>
+                    <input type="file" name="csv_file" id="csv_file" class="form-control" accept=".csv" required>
+                </div>
+                
+                <div class="mt-4 pt-3 text-end" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                    <a href="{% url 'expense_list' %}" class="btn btn-outline-light me-2" style="border-color: rgba(255,255,255,0.2); color: #f8fafc;">Cancel</a>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fa-solid fa-upload me-2"></i>Start Import
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Format Example Card -->
+        <div class="glass-card mt-4">
+            <h6 class="fw-bold mb-3 text-secondary">CSV Format Example:</h6>
+            <div class="bg-dark p-3 rounded" style="background-color: rgba(0,0,0,0.2) !important;">
+                <code class="text-info small">Date,Title,Category,Amount,Description<br>
+                17-03-2026,medical,Healthcare,1487,went for medicines<br>
+                18-03-2026,Groceries,Food,2500,Weekly shopping</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+#import-form input[type="file"] {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#import-form input[type="file"]:focus {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(96, 165, 250, 0.5);
+    box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.5);
+    outline: none;
+}
+
+#import-form input::file-selector-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#import-form input::file-selector-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+</style>
+{% endblock %}

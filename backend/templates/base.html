@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PocketPulse By Debesh{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Empty style block or removed styling */
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar d-none d-lg-flex">
+            <div class="sidebar-brand">
+                <a href="{% url 'landing' %}" class="text-decoration-none">
+                    <h1 class="logo mb-0">Pocket<span class="highlight">Pulse</span></h1>
+                </a>
+            </div>
+
+            <ul class="sidebar-nav">
+                {% if user.is_authenticated %}
+                <li>
+                    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <i class="fa-solid fa-border-all"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'expense_list' %}" class="nav-link {% if request.resolver_match.url_name == 'expense_list' %}active{% endif %}">
+                        <i class="fa-solid fa-list"></i> Expenses
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'add_expense' %}" class="nav-link {% if request.resolver_match.url_name == 'add_expense' %}active{% endif %}">
+                        <i class="fa-solid fa-plus"></i> Add Expense
+                    </a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{% url 'login' %}" class="nav-link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                </li>
+                <li>
+                    <a href="{% url 'register' %}" class="nav-link"><i class="fa-solid fa-user-plus"></i> Register</a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="sidebar-bottom">
+                {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
+                <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link logout-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

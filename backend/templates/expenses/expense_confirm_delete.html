@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Expense - Pocket Pulse{% endblock %}
+{% block page_title %}Delete Expense{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="glass-card text-center">
+            <h2 class="text-danger fw-bold mb-3">Delete Transaction?</h2>
+            <p class="mb-4 text-muted">
+                Are you sure you want to delete the entry <strong>"{{ expense.title }}"</strong> (₹{{ expense.amount }})?
+                <br>This action cannot be undone.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <a href="{% url 'expense_list' %}" class="btn btn-secondary me-2">Cancel</a>
+                <button type="submit" class="btn btn-danger px-4 rounded-3 shadow-sm">Yes, Delete permanently</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

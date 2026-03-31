@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - Pocket Pulse{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 120px);">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+        <!-- Main Form Card -->
+        <div class="glass-card p-4 p-md-5 shadow-lg position-relative overflow-hidden"
+            style="border: 1px solid rgba(255, 255, 255, 0.05); background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px);">
+
+            <!-- Decorative Backglows -->
+            <div style="position: absolute; top: -50px; left: -50px; width: 180px; height: 180px; background: rgba(96, 165, 250, 0.1); border-radius: 50%; filter: blur(50px);"></div>
+            <div style="position: absolute; bottom: -50px; right: -50px; width: 180px; height: 180px; background: rgba(52, 211, 153, 0.1); border-radius: 50%; filter: blur(50px);"></div>
+
+            <div class="mb-5 text-center position-relative z-1">
+                <div class="mx-auto mb-4 d-flex justify-content-center align-items-center"
+                    style="width: 64px; height: 64px; background: linear-gradient(135deg, rgba(96,165,250,0.1), rgba(52,211,153,0.1)); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                    <i class="fa-solid fa-shield-halved text-primary fs-3"></i>
+                </div>
+                <h2 class="text-white fw-bold mb-2">Welcome Back</h2>
+                <p class="text-muted small">Access your financial control center.</p>
+            </div>
+
+            <form method="post" class="position-relative z-1">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label class="form-label text-muted small fw-bold text-uppercase tracking-wider">Username</label>
+                    <div class="auth-input-wrapper">
+                        <input type="text" name="username" class="form-control" required autofocus placeholder="Enter username">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between">
+                        <label class="form-label text-muted small fw-bold text-uppercase tracking-wider">Password</label>
+                    </div>
+                    <div class="auth-input-wrapper">
+                        <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                    </div>
+                </div>
+
+                {% if form.errors %}
+                <div class="mb-4 p-3 rounded-3" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);">
+                    <p class="text-danger small fw-medium m-0"><i class="fa-solid fa-circle-exclamation me-1"></i> Invalid credentials. Please try again.</p>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary-custom w-100 py-3 mt-2 mb-4 fw-bold">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="text-center position-relative z-1 pt-4 mt-2" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                <p class="text-muted small mb-0">Don't have an account? <a
+                        href="{% url 'register' %}" class="text-primary text-decoration-none fw-bold ms-1">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Shared Auth Styling */
+    .auth-input-wrapper input {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #f8fafc !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        width: 100% !important;
+        font-size: 0.95rem !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .auth-input-wrapper input:focus {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: #60a5fa !important;
+        box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.2) !important;
+        outline: none !important;
+    }
+
+    /* Override bootstrap focus */
+    .form-control:focus {
+        box-shadow: none;
+    }
+</style>
+{% endblock %}

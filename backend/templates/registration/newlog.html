@@ -1,0 +1,238 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketPulse - Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%, 100%': { filter: 'brightness(1) blur(0px)' },
+                            '50%': { filter: 'brightness(1.2) blur(1px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #050816;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .glass-form {
+            background: rgba(10, 15, 30, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            box-shadow: 
+                0 0 40px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(79, 172, 254, 0.05);
+        }
+        .input-glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .input-glass:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+            outline: none;
+        }
+        .btn-gradient {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 242, 254, 0.4);
+            filter: brightness(1.1);
+        }
+        .text-gradient {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="font-inter">
+    <div id="container"></div>
+
+    <!-- Top Left Logo -->
+    <a href="{% url 'landing' %}" class="fixed top-5 left-8 z-50 flex items-center group transition-all duration-300">
+        <span class="text-2xl font-bold tracking-tight">
+            <span style="color: #4facfe;" class="group-hover:drop-shadow-[0_0_8px_rgba(79,172,254,0.5)] transition-all">Pocket</span><span style="color: #00f2fe;" class="group-hover:drop-shadow-[0_0_8px_rgba(0,242,254,0.5)] transition-all">Pulse</span>
+        </span>
+    </a>
+    
+    <div class="fixed inset-0 flex items-center justify-center p-4 z-10">
+        <div class="w-full max-w-md animate-float">
+            <div class="glass-form rounded-[2.5rem] p-10 relative overflow-hidden">
+                <!-- Header / Branding -->
+                <div class="text-center mb-10">
+                    <h1 class="text-4xl font-bold tracking-tight mb-2">
+                        <span style="color: #4facfe;">Pocket</span><span style="color: #00f2fe;">Pulse</span>
+                    </h1>
+                    <p class="text-gray-400 text-sm font-medium opacity-80">Feel the rhythm of your finances</p>
+                </div>
+
+                <!-- Login Form -->
+                <form method="post" action="{% url 'login' %}" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="mb-4 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                            <span class="font-semibold">Access Denied:</span> Invalid credentials.
+                        </div>
+                    {% endif %}
+
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2 ml-1">Username</label>
+                            <input type="text" name="username" class="w-full px-5 py-4 rounded-2x; rounded-2xl input-glass text-sm placeholder-gray-500" placeholder="Enter your username" required="">
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-2 ml-1">
+                                <label class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Password</label>
+                                <a href="#" class="text-[11px] text-[#00f2fe] opacity-70 hover:opacity-100 transition-opacity">Forgot?</a>
+                            </div>
+                            <input type="password" name="password" class="w-full px-5 py-4 rounded-2xl input-glass text-sm placeholder-gray-500" placeholder="Enter your password" required="">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-2 ml-1">
+                        <input type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-700 bg-transparent text-[#00f2fe] focus:ring-[#00f2fe] focus:ring-offset-0">
+                        <label for="remember" class="text-xs text-gray-400">Remember me</label>
+                    </div>
+
+                    <!-- Sign In Button -->
+                    <button type="submit" class="w-full py-4 px-6 btn-gradient text-white font-bold rounded-2xl shadow-lg hover:shadow-cyan-500/30 transition-all duration-300">
+                        Sign In
+                    </button>
+
+                    <!-- Sign Up Link -->
+                    <p class="text-center text-sm text-gray-500 mt-8">
+                        New here? 
+                        <a href="{% url 'register' %}" class="text-[#00f2fe] font-semibold hover:underline decoration-2 underline-offset-4 ml-1">Create Account</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scene, camera, renderer, material;
+        let startTime = Date.now();
+
+        const vertexShader = `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+
+        const fragmentShader = `
+            uniform float iTime;
+            uniform vec2 iResolution;
+            varying vec2 vUv;
+
+            #define S smoothstep
+
+            vec4 Line(vec2 uv, float speed, float height, vec3 col) {
+                uv.y += S(1., 0., abs(uv.x)) * sin(iTime * speed + uv.x * height) * 0.2;
+                return vec4(S(0.08 * S(0.2, 0.9, abs(uv.x)), 0., abs(uv.y) - 0.004) * col, 1.0) * S(1., 0.3, abs(uv.x));
+            }
+
+            void main() {
+                vec2 uv = (vUv - 0.5) * vec2(iResolution.x / iResolution.y, 1.0);
+                vec4 O = vec4(0.02, 0.03, 0.09, 1.0); // Deep dark background #050816 approx
+                
+                for (float i = 0.; i <= 5.; i += 1.) {
+                    float t = i / 5.;
+                    float timeOffset = iTime * 0.2 + t * 4.0;
+                    
+                    // Blue to Green/Cyan gradient system
+                    vec3 blueColor = vec3(0.31, 0.67, 0.99); // #4facfe
+                    vec3 greenColor = vec3(0.00, 0.95, 0.99); // #00f2fe
+                    
+                    vec3 auroraColor = mix(blueColor, greenColor, sin(timeOffset) * 0.5 + 0.5);
+                    auroraColor = mix(auroraColor, vec3(0.0, 0.4, 0.8), cos(timeOffset * 0.5) * 0.5 + 0.5);
+                    
+                    O += Line(uv, 0.5 + t * 0.5, 3.0 + t * 2.0, auroraColor) * 0.8;
+                }
+                
+                gl_FragColor = O;
+            }
+        `;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            material = new THREE.ShaderMaterial({
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                uniforms: {
+                    iTime: { value: 0 },
+                    iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+                }
+            });
+
+            const geometry = new THREE.PlaneGeometry(2, 2);
+            const plane = new THREE.Mesh(geometry, material);
+            scene.add(plane);
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            material.uniforms.iTime.value = (Date.now() - startTime) * 0.001;
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
+        }
+
+        window.addEventListener('resize', onWindowResize);
+        init();
+    </script>
+</body>
+</html>
