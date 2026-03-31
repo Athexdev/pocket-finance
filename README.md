@@ -1,4 +1,4 @@
-# 💸 Pocket Finance
+# 💸 Pocket Pulse
 
 ### *Feel the rhythm of your finances.*
 
